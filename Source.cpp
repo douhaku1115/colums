@@ -64,8 +64,26 @@ int main() {
 		fieldCells[0][i]= fieldCells[FIELD_HEIGHT-1][i]= CELL_WALL;
 	resetColums();
 
-	display();
-	
+	time_t t = time(NULL);
+
+	while (1) {
+		if (time(NULL) > t) {
+			t = time(NULL);
+			columsY++;
+			display();
+		}
+		if (_kbhit()) {
+			switch (_getch()) {
+				case'w':columsY--; break;
+				case's':columsY++; break;
+				case'a':columsX--; break;
+				case'd':columsX++; break;
+				case' ':colums; break;
+
+			}
+			display();
+		}
+	}
 	_getch();
 
 
