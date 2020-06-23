@@ -56,6 +56,9 @@ void display() {
 		printf("\n");
 	}
 }
+int columsIntersecField(int _columsX,int _columsY) {
+	return fieldCells[_columsY + COLUMS_MAX - 1][_columsX] != CELL_NONE;
+}
 int main() {
 	srand((unsigned int)time(NULL));
 	for (int  i = 0; i < FIELD_HEIGHT; i++) 
@@ -69,15 +72,26 @@ int main() {
 	while (1) {
 		if (time(NULL) > t) {
 			t = time(NULL);
+			if (columsIntersecField(columsX, columsY + 1)) {
+
+			}
+			else
 			columsY++;
 			display();
 		}
 		if (_kbhit()) {
 			switch (_getch()) {
-				case'w':columsY--; break;
-				case's':columsY++; break;
-				case'a':columsX--; break;
-				case'd':columsX++; break;
+				//case'w':columsY--; break;
+				case's':
+					if(!columsIntersecField(columsX, columsY+1))
+					columsY++; break;
+				case'a':
+					if(!columsIntersecField(columsX-1, columsY))
+						columsX--; break;
+				case'd':
+					
+					if (!columsIntersecField(columsX + 1, columsY))
+						columsX++; break;
 				case' ':colums; break;
 
 			}
