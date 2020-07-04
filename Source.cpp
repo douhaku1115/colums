@@ -59,6 +59,36 @@ void display() {
 int columsIntersecField(int _columsX,int _columsY) {
 	return fieldCells[_columsY + COLUMS_MAX - 1][_columsX] != CELL_NONE;
 }
+bool erase() {
+	bool erased = false;
+	for (int i = 1; i < FIELD_HEIGHT - 1; i++)
+		for (int j = 1; j < FIELD_WIDTH - 1; j++) {
+			const int directionMax = 4;
+			int directions[][2] = {
+				{1,0},
+				{0,1},
+				{1,1},
+				{1,-1} };
+			for (int k = 0; k < directionMax; k++) {
+				int conectCount = 0;
+				char cell = fieldCells[i][j];
+				for (int y = i, x = j;
+					fieldCells[y][x] == cell;
+					x += directions[k][0], y += directions[k][1])
+					conectCount++;
+				if (conectCount >= 3) {
+					erased = true;
+					for (int y = i, x = j;
+						fieldCells[y][x] == cell;
+						x += directions[k][0], y += directions[k][1])
+						fieldCells[y][x] = CELL_NONE;
+					;
+				}
+			}
+		}
+	return erased;
+}
+
 int main() {
 	srand((unsigned int)time(NULL));
 	for (int  i = 0; i < FIELD_HEIGHT; i++) 
@@ -68,34 +98,49 @@ int main() {
 	resetColums();
 
 	time_t t = time(NULL);
-
+	bool pass = false;
 	while (1) {
 		if (time(NULL) > t) {
 			t = time(NULL);
 			if (columsIntersecField(columsX, columsY + 1)) {
+				for (int i = 0; i < COLUMS_MAX; i++)
+					fieldCells[columsY + i][columsX] = colums[i];
+				resetColums();
 
+				if (erase())
+					pass = true;
 			}
 			else
 			columsY++;
 			display();
 		}
 		if (_kbhit()) {
-			switch (_getch()) {
-				//case'w':columsY--; break;
+			if (pass)
+				_getch();
+			else {
+				switch (_getch()) {
 				case's':
-					if(!columsIntersecField(columsX, columsY+1))
-					columsY++; break;
-				case'a':
-					if(!columsIntersecField(columsX-1, columsY))
-						columsX--; break;
+					if (!columsIntersecField(columsX, columsY + 1))
+						columsY++; break;
 				case'd':
-					
 					if (!columsIntersecField(columsX + 1, columsY))
 						columsX++; break;
-				case' ':colums; break;
+				case'a':
+					if (!columsIntersecField(columsX - 1, columsY))
+						columsX--; break;
 
+				case' ':
+				{
+					char temp[COLUMS_MAX];
+					memcpy(temp, colums, sizeof colums);
+					for (int i = 0; i < COLUMS_MAX; i++)
+						colums[(i + 1) % COLUMS_MAX] = temp[i];
+				}
+				break;
+
+				}
+				display();
 			}
-			display();
 		}
 	}
 	_getch();
