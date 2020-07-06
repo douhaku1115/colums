@@ -102,7 +102,21 @@ int main() {
 	while (1) {
 		if (time(NULL) > t) {
 			t = time(NULL);
-			if (columsIntersecField(columsX, columsY + 1)) {
+
+			if (pass) {
+				bool fall = false;
+				for(int i= FIELD_HEIGHT - 2;i>=1;i--)
+					for (int j=1; j < FIELD_WIDTH-1; j++) {
+						if ((fieldCells[i + 1][j] == CELL_NONE) && (fieldCells[i][j] != CELL_NONE)) {
+							fall = true;
+							fieldCells[i + 1][j] = fieldCells[i][j];
+							fieldCells[i][j] = CELL_NONE;
+						}
+					}
+				if (!fall)
+					pass = false;
+			}
+			else if (columsIntersecField(columsX, columsY + 1)) {
 				for (int i = 0; i < COLUMS_MAX; i++)
 					fieldCells[columsY + i][columsX] = colums[i];
 				resetColums();
