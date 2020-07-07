@@ -38,6 +38,7 @@ char fieldCells[FIELD_HEIGHT][FIELD_WIDTH];
 char displayBuffer[FIELD_HEIGHT][FIELD_WIDTH];
 char colums[COLUMS_MAX];
 int columsX, columsY;
+bool pass = false;
 
 void resetColums() {
 	columsX = COLUMS_DEFAULT_X;
@@ -48,9 +49,11 @@ void resetColums() {
 void display() {
 	system("cls");
 	memcpy(displayBuffer, fieldCells, sizeof(fieldCells));
-	for (int i = 0; i < COLUMS_MAX; i++)
+	
+	if(!pass)
+		for (int i = 0; i < COLUMS_MAX; i++)
 		displayBuffer[columsY + i][columsX] = colums[i];
-	for (int i = 0; i < FIELD_HEIGHT; i++) {        //•`‰æ
+	for (int i = 3; i < FIELD_HEIGHT; i++) {        //•`‰æ
 		for (int j = 0; j < FIELD_WIDTH; j++)
 			printf("%s", cellAA[displayBuffer[i][j]]);
 		printf("\n");
@@ -119,6 +122,15 @@ int main() {
 			else if (columsIntersecField(columsX, columsY + 1)) {
 				for (int i = 0; i < COLUMS_MAX; i++)
 					fieldCells[columsY + i][columsX] = colums[i];
+				for(int i=1;i<3;i++)
+					for(int j=1;j<FIELD_WIDTH-1;j++)
+						if (fieldCells[i][j] != CELL_NONE) {
+							printf("GAME OVER\n");
+							_getch();
+							exit(0);
+						}
+
+
 				resetColums();
 
 				if (erase())
